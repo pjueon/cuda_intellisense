@@ -66,8 +66,9 @@ class CudaIntellisense:
         with open(file_path) as file:
             lines = file.readlines()
             if len(lines) > 0:
-                max_search = 10
-                for i in range(max_search):
+                max_search_range = 20
+                search_range = min(max_search_range, len(lines))
+                for i in range(search_range):
                     index = -1 - i
                     line = lines[index].strip()
                     if len(line) == 0:
