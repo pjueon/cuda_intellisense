@@ -21,7 +21,6 @@ class CudaIntellisense:
             print(self.option.usage())
             return
 
-        # print(f"[DEBUG] install to {self.option.install_path}")
         self.install(self.option.install_path)
 
 
@@ -36,8 +35,8 @@ class CudaIntellisense:
 
         
         print(f"Install cuda_intellisense to '{install_directory}'")
-        self.install_headers(install_directory)
         self.modify_target_file(install_directory)
+        self.install_headers(install_directory)
 
         print("Installation complete.")
 
@@ -66,17 +65,17 @@ class CudaIntellisense:
 
         with open(file_path) as file:
             lines = file.readlines()
-            
-            max_search = 10
-            for i in range(max_search):
-                index = -1 - i
-                line = lines[index].strip()
-                if len(line) == 0:
-                    continue
+            if len(lines) > 0:
+                max_search = 10
+                for i in range(max_search):
+                    index = -1 - i
+                    line = lines[index].strip()
+                    if len(line) == 0:
+                        continue
 
-                if line == last_line:
-                    print("cuda_intellisense is already installed")
-                    return
+                    if line == last_line:
+                        print("cuda_intellisense is already installed. Update cuda_intellisense.")
+                        return
 
         self.backup_files(install_directory)
         with open(file_path, "a") as file:
@@ -92,12 +91,28 @@ class CudaIntellisense:
             print(f"Create directory '{destination_path}'")
 
         input_header_paths = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, "headers"))
-        for f in os.listdir(input_header_paths):
-            input_path = os.path.join(input_header_paths, f)
-            output_path = os.path.join(destination_path, f)
+        for filename in os.listdir(input_header_paths):
+            input_path = os.path.join(input_header_paths, filename)
+            output_path = os.path.join(destination_path, filename)
 
             print(f"Copy '{input_path}' to '{output_path}'")
             shutil.copy(input_path, output_path)
+
+        self.write_version_header(destination_path)
+        
+
+    def write_version_header(self, destination_path):
+        version_header_path = os.path.join(destination_path, "cuda_intellisense_version.h")
+        print(f"Write '{version_header_path}' file")
+
+        content = str()
+        content += "#pragma once\n"
+        content += "#ifndef CUDA_INTELLISENSE_VERSION\n"
+        content += f"#define CUDA_INTELLISENSE_VERSION {self.version}\n"
+        content += "#endif"
+
+        with open(version_header_path, "w") as f:
+            f.write(content)
 
 
     def error_message(self, msg):
