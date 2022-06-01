@@ -9,7 +9,7 @@ class CudaIntellisense:
 
     def run(self):
         if self.option.error is not None:
-            print(f"[ERROR] {self.option.error}")
+            print(self.error_message(self.option.error))
             print(self.option.usage())
             return
 
@@ -27,16 +27,19 @@ class CudaIntellisense:
 
     def install(self, target_path):
         if not os.path.exists(target_path):
-            print(f"[ERROR] target path '{target_path}' does not exist")
+            print(self.error_message(f"target path '{target_path}' does not exist"))
             return
         
         if not os.path.isdir(target_path):
-            print(f"[ERROR] target path '{target_path}' is not a directory")
+            print(self.error_message(f"target path '{target_path}' is not a directory"))
             return
+
         
         print(f"Install cuda_intellisense to '{target_path}'")
         self.install_headers(target_path)
         self.modify_target_file(target_path)
+
+        print("Installation complete.")
 
 
     def target_file(self, target_directory):
@@ -96,6 +99,9 @@ class CudaIntellisense:
             print(f"Copy '{input_path}' to '{output_path}'")
             shutil.copy(input_path, output_path)
 
+
+    def error_message(self, msg):
+        return f"[ERROR] {msg}"
 
 
 if __name__ == "__main__":

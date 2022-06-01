@@ -47,7 +47,7 @@ class InstallOption:
             cuda_path = os.environ.get(self.cuda_path)
 
         if cuda_path is None:
-            self.error = f"Failed to get the environment variable '{self.cuda_path}'. Please specify the install path by --path option."
+            self.error = f"Failed to get the environment variable '{self.cuda_path}'. Please specify the install path by --path/-p option."
             return None
         
         return os.path.join(cuda_path, "include", "crt")
