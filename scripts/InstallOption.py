@@ -4,7 +4,7 @@ import os
 class InstallOption:
     def __init__(self, argv) -> None:
         self.argv = argv
-        self.script_name = None
+        self.script_path = None
         self.install_path = None
         self.cuda_path = "CUDA_PATH"
         self.error = None
@@ -15,7 +15,7 @@ class InstallOption:
 
 
     def _parse(self):
-        self.script_name = os.path.basename(self.argv[0])
+        self.script_path = self.argv[0]
 
         try:
             opts, _ = getopt.getopt(self.argv[1:], "hp:", ["help", "path=", "cuda_path=", "version"])
@@ -54,10 +54,10 @@ class InstallOption:
 
 
     def usage(self):
-        msg = f"usage: {self.script_name} [options]\n"
+        msg = f"usage: python {self.script_path} [options]\n"
         msg += "options:\n"
         msg += "\t--path=, -p=     : installation path. default value: " + self.default_path("${CUDA_PATH}") + "\n"
-        msg += "\t--cuda_path=     : name of the cuda path environment variable. default value: CUDA_PATH\n"
-        msg += "\t--version        : version of this script.\n"
-        msg += "\t-help, h         : this help.\n"
+        msg += "\t--cuda_path=     : name of the cuda path environment variable (ex> CUDA_PATH_v10_2). default value: CUDA_PATH\n"
+        msg += "\t--version        : show the version of cuda_intellisense.\n"
+        msg += "\t-help, h         : show this help.\n"
         return msg
