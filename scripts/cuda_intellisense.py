@@ -21,33 +21,33 @@ class CudaIntellisense:
             print(self.option.usage())
             return
 
-        # print(f"[DEBUG] install to {self.option.target_path}")
-        self.install(self.option.target_path)
+        # print(f"[DEBUG] install to {self.option.install_path}")
+        self.install(self.option.install_path)
 
 
-    def install(self, target_path):
-        if not os.path.exists(target_path):
-            print(self.error_message(f"target path '{target_path}' does not exist"))
+    def install(self, install_directory):
+        if not os.path.exists(install_directory):
+            print(self.error_message(f"install path '{install_directory}' does not exist"))
             return
         
-        if not os.path.isdir(target_path):
-            print(self.error_message(f"target path '{target_path}' is not a directory"))
+        if not os.path.isdir(install_directory):
+            print(self.error_message(f"install path '{install_directory}' is not a directory"))
             return
 
         
-        print(f"Install cuda_intellisense to '{target_path}'")
-        self.install_headers(target_path)
-        self.modify_target_file(target_path)
+        print(f"Install cuda_intellisense to '{install_directory}'")
+        self.install_headers(install_directory)
+        self.modify_target_file(install_directory)
 
         print("Installation complete.")
 
 
-    def target_file(self, target_directory):
-        return os.path.join(target_directory, "host_defines.h")
+    def target_file(self, install_directory):
+        return os.path.join(install_directory, "host_defines.h")
 
 
-    def backup_files(self, target_path):
-        file_path = self.target_file(target_path)
+    def backup_files(self, install_directory):
+        file_path = self.target_file(install_directory)
         backup_path = f"{file_path}.backup"
 
         count = 0
@@ -59,8 +59,8 @@ class CudaIntellisense:
         shutil.copy(file_path, backup_path)
 
 
-    def modify_target_file(self, target_path):
-        file_path = self.target_file(target_path)
+    def modify_target_file(self, install_directory):
+        file_path = self.target_file(install_directory)
 
         last_line = '#include "cuda_intellisense/cuda_intellisense.h"' 
 
@@ -78,15 +78,15 @@ class CudaIntellisense:
                     print("cuda_intellisense is already installed")
                     return
 
-        self.backup_files(target_path)
+        self.backup_files(install_directory)
         with open(file_path, "a") as file:
             file.write(f"\n{last_line}")
 
         return
 
 
-    def install_headers(self, target_path):
-        destination_path = os.path.join(target_path, "cuda_intellisense")
+    def install_headers(self, install_directory):
+        destination_path = os.path.join(install_directory, "cuda_intellisense")
         if not os.path.exists(destination_path):
             os.makedirs(destination_path)
             print(f"Create directory '{destination_path}'")

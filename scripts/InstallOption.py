@@ -5,7 +5,7 @@ class InstallOption:
     def __init__(self, argv) -> None:
         self.argv = argv
         self.script_name = None
-        self.target_path = None
+        self.install_path = None
         self.cuda_path = "CUDA_PATH"
         self.error = None
         self.help_requested = False
@@ -30,7 +30,7 @@ class InstallOption:
                 return
 
             elif opt in ("-p", "--path"):
-                self.target_path = arg
+                self.install_path = arg
             
             elif opt == "--cuda_path":
                 self.cuda_path = arg
@@ -38,8 +38,8 @@ class InstallOption:
             elif opt == "--version":
                 self.version_requested = True
 
-        if self.target_path is None:
-            self.target_path = self.default_path()
+        if self.install_path is None:
+            self.install_path = self.default_path()
 
 
     def default_path(self, cuda_path = None):
@@ -56,8 +56,8 @@ class InstallOption:
     def usage(self):
         msg = f"usage: {self.script_name} [options]\n"
         msg += "options:\n"
-        msg += "\t--path=, -p=     : path to install. default value: " + self.default_path("${CUDA_PATH}") + "\n"
-        msg += "\t--cuda_path=     : name of cuda path environment variable. default value: CUDA_PATH\n"
+        msg += "\t--path=, -p=     : installation path. default value: " + self.default_path("${CUDA_PATH}") + "\n"
+        msg += "\t--cuda_path=     : name of the cuda path environment variable. default value: CUDA_PATH\n"
         msg += "\t--version        : version of this script.\n"
         msg += "\t-help, h         : this help.\n"
         return msg
