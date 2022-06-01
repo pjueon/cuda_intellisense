@@ -4,12 +4,12 @@ A simple python script to fix cuda C++ intellisense for visual studio.
 ## Install cuda_intellisense
 You can install cuda_intellisense by running `scripts/cuda_intellisense.py`.   
 
+**Note**  
+You should run it as administrator.
+
 ```shell
 python scripts/cuda_intellisense.py [options]
 ```
-
-**Note**  
-You should run it as administrator.
 
 ### Install options
 |Option|Description|
@@ -25,9 +25,9 @@ After installation, visual studio will not complain about cuda code except for t
 For the kernel arguments, you can use `KERNEL_ARGS` macro.
 
 It works just like `<<< ... >>>`: 
-- `KERNEL_ARGS(grid, block)` equals to `<<<grid, block>>>`
-- `KERNEL_ARGS(grid, block, sh_mem)` equals to `<<<grid, block, sh_mem>>>`
-- `KERNEL_ARGS(grid, block, sh_mem, stream)` equals to `<<<grid, block, sh_mem, stream>>>`
+- `KERNEL_ARGS(grid, block)` is equal to `<<<grid, block>>>`
+- `KERNEL_ARGS(grid, block, sh_mem)` is equal to `<<<grid, block, sh_mem>>>`
+- `KERNEL_ARGS(grid, block, sh_mem, stream)` is equal to `<<<grid, block, sh_mem, stream>>>`
 
 ```cpp
 # include "cuda_intellisense/kernel_args.h" // for KERNEL_ARGS macro
