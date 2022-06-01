@@ -50,7 +50,7 @@ class InstallOption:
             self.error = f"Failed to get the environment variable '{self.cuda_path}'. Please specify the install path by --path/-p option."
             return None
         
-        return os.path.join(cuda_path, "include", "crt")
+        return os.path.join(cuda_path, "include")
 
 
     def usage(self):
