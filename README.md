@@ -20,14 +20,38 @@ You should run it as administrator.
 |`--help`, `-h`|show help.|
 
 
-## Check the version of cuda_intellisense 
-From terminal:
-```shell
-python scripts/cuda_intellisense.py --version
+## Usage
+After installation, visual studio will not complain about cuda code except for the kernel arguments(`<<< ... >>>`).
+For the kernel arguments, you can use `KERNEL_ARGS` macro.
+
+It works just like `<<< ... >>>`: 
+- `KERNEL_ARGS(grid, block)` equals to `<<<grid, block>>>`
+- `KERNEL_ARGS(grid, block, sh_mem)` equals to `<<<grid, block, sh_mem>>>`
+- `KERNEL_ARGS(grid, block, sh_mem, stream)` equals to `<<<grid, block, sh_mem, stream>>>`
+
+```cpp
+# include "cuda_intellisense/kernel_args.h" // for KERNEL_ARGS macro
+
+// cuda kernel example
+__global__ void addKernel(int* c, const int* a, const int* b)
+{
+    int i = threadIdx.x;
+    c[i] = a[i] + b[i];
+}
+
+int main()
+{
+    /* ... */
+    
+    // equal to addKernel <<<grid, block>>> (dev_c, dev_b, dev_a);
+    addKernel KERNEL_ARGS(grid, block) (dev_c, dev_b, dev_a);
+
+    /* ... */
+    return 0;
+}
 ```
 
-From C++ source code:
-```cpp
-// defined as a macro
-CUDA_INTELLISENSE_VERSION
-```
+**Note**  
+`KERNEL_ARGS` macro is defined in `kernel_args.h` file. 
+**You should add this header file to your project** unless those who didn't install the cuda_intellisense won't be able to build your project.
+Create `cuda_intellisense` directory to your project and copy`kernel_args.h` file from `headers` directory of this repository or your installation path.   
