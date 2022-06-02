@@ -64,7 +64,7 @@ class CudaIntellisense:
 
 
     def target_file(self, install_directory):
-        return os.path.join(install_directory, "host_defines.h")
+        return os.path.join(install_directory, "crt", "host_defines.h")
 
 
     def backup_files(self, install_directory):
