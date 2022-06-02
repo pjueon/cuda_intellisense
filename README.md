@@ -2,7 +2,7 @@
 A simple python script to fix cuda C++ intellisense for visual studio. 
 
 ## Background 
-If you write cuda C++ code with Visual Studio, you might face some annoying red line like this:  
+If you write cuda C++ code with Visual Studio, you might face some annoying red lines like this:  
 
 ![before](img/before.jpg)
 
@@ -67,6 +67,6 @@ So the IntelliSense compiler cannot see the cuda codes that it cannot understand
 cuda_intellisense was tested on the following environment. 
 
 - OS: Windows 10 
-- Visual Studio version: 2019
+- Visual Studio version: 2019, 2022
 - CUDA Toolkit version: 10.2, 11.1 
 
