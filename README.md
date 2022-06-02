@@ -17,7 +17,14 @@ With cuda_intellisense, you can fix this!
 
 
 ## Installation
-You can install cuda_intellisense by running `scripts/cuda_intellisense.py`.   
+First, clone this repository.
+
+```shell
+git clone https://github.com/pjueon/cuda_intellisense.git
+cd cuda_intellisense
+```
+
+And then, run the `scripts/cuda_intellisense.py` file.   
 
 **Note**  
 You should run it as administrator.
@@ -34,6 +41,7 @@ python scripts/cuda_intellisense.py [options]
 |`--version`|show the version of cuda_intellisense.|
 |`--help`, `-h`|show help.|
 
+That's it!
 
 ## Usage
 After installation, visual studio will not complain about cuda code except for the kernel arguments(`<<< ... >>>`).
