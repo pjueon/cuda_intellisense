@@ -1,8 +1,12 @@
 # cuda_intellisense
-A simple python script to fix cuda C++ intellisense for visual studio. 
+A simple python script to fix cuda C++ IntelliSense for visual studio. 
+
+**Note**  
+With the latest version of the Visual Studio, maybe you don't need cuda_intellisense any more. 
+
 
 ## Background 
-If you write cuda C++ code with Visual Studio, you might face some annoying red lines like this:  
+If you write cuda C++ code with Visual Studio, you might see some annoying red lines like this:  
 
 ![before](img/before.jpg)
 
@@ -44,7 +48,7 @@ python scripts/cuda_intellisense.py [options]
 That's it!
 
 ## Usage
-After installation, visual studio will not complain about cuda code except for the kernel arguments(`<<< ... >>>`).
+After installation, the Visual Studio will stop complaining about cuda code except for the kernel arguments(`<<< ... >>>`).
 For the kernel arguments, you can use `KERNEL_ARGS` macro.
 
 It works just like `<<< ... >>>`: 
@@ -68,7 +72,7 @@ addKernel KERNEL_ARGS(grid, block) (dev_c, dev_b, dev_a);
 
 ## How does it work?
 The trick is using the [`__INTELLISENSE__`](https://devblogs.microsoft.com/cppblog/troubleshooting-tips-for-intellisense-slowness/) macro, which is only defined when using the IntelliSense compiler. cuda_intellisense uses `#ifdef __INTELLISENSE__` macro to hide stuff from the IntelliSense compiler. 
-So the IntelliSense compiler cannot see the cuda codes that it cannot understand and stop complainning about them.
+So the IntelliSense compiler cannot see the cuda codes that it cannot understand and stop complaining about them.
 
 
 ## Test environment
