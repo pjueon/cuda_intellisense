@@ -72,15 +72,19 @@ class CudaIntellisense:
 
     def backup_files(self, install_directory):
         file_path = self.target_file(install_directory)
+        backup_path = self.backup_file_path(file_path)
+
+        self.logger.info(f"Backup '{file_path}' as '{backup_path}'")
+        shutil.copy(file_path, backup_path)
+
+    def backup_file_path(self, file_path):
         backup_path = f"{file_path}.backup"
 
         count = 0
         while os.path.exists(backup_path):
             count += 1
             backup_path = f"{file_path}.backup{count}"
-
-        self.logger.info(f"Backup '{file_path}' as '{backup_path}'")
-        shutil.copy(file_path, backup_path)
+        return backup_path
 
     def modify_target_file(self, install_directory):
         file_path = self.target_file(install_directory)
@@ -99,7 +103,7 @@ class CudaIntellisense:
                         continue
 
                     if line == last_line:
-                        self.logger.info(
+                        self.logger.warning(
                             "cuda_intellisense is already installed. Update cuda_intellisense.")
                         return
 
