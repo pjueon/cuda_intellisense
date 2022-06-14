@@ -20,52 +20,55 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys, os, shutil
+import sys
+import os
+import shutil
+import logging
+from datetime import datetime
 from InstallOption import InstallOption
+
 
 class CudaIntellisense:
     def __init__(self, option: InstallOption) -> None:
         self.option = option
         self.version = "v0.2"
-    
+        self.init_log()
 
     def run(self):
         if self.option.error is not None:
-            print(self.error_message(self.option.error))
-            print(self.option.usage())
+            self.logger.error(self.option.error)
+            self.logger.info(self.option.usage())
             return
 
         if self.option.version_requested:
-            print(f"cuda_intellisense {self.version}")
+            self.logger.info(f"cuda_intellisense {self.version}")
             return
 
         if self.option.help_requested:
-            print(self.option.usage())
+            self.logger.info(self.option.usage())
             return
 
         self.install(self.option.install_path)
 
-
     def install(self, install_directory):
         if not os.path.exists(install_directory):
-            print(self.error_message(f"install path '{install_directory}' does not exist"))
-            return
-        
-        if not os.path.isdir(install_directory):
-            print(self.error_message(f"install path '{install_directory}' is not a directory"))
+            self.logger.error(
+                f"install path '{install_directory}' does not exist")
             return
 
-        
-        print(f"Install cuda_intellisense to '{install_directory}'")
+        if not os.path.isdir(install_directory):
+            self.logger.error(
+                f"install path '{install_directory}' is not a directory")
+            return
+
+        self.logger.info(f"Install cuda_intellisense to '{install_directory}'")
         self.modify_target_file(install_directory)
         self.install_headers(install_directory)
 
-        print("Installation complete.")
-
+        self.logger.info("Installation complete.")
 
     def target_file(self, install_directory):
         return os.path.join(install_directory, "crt", "host_defines.h")
-
 
     def backup_files(self, install_directory):
         file_path = self.target_file(install_directory)
@@ -76,14 +79,13 @@ class CudaIntellisense:
             count += 1
             backup_path = f"{file_path}.backup{count}"
 
-        print(f"Backup '{file_path}' as '{backup_path}'")
+        self.logger.info(f"Backup '{file_path}' as '{backup_path}'")
         shutil.copy(file_path, backup_path)
-
 
     def modify_target_file(self, install_directory):
         file_path = self.target_file(install_directory)
 
-        last_line = '#include "cuda_intellisense/cuda_intellisense.h"' 
+        last_line = '#include "cuda_intellisense/cuda_intellisense.h"'
 
         with open(file_path) as file:
             lines = file.readlines()
@@ -97,7 +99,8 @@ class CudaIntellisense:
                         continue
 
                     if line == last_line:
-                        print("cuda_intellisense is already installed. Update cuda_intellisense.")
+                        self.logger.info(
+                            "cuda_intellisense is already installed. Update cuda_intellisense.")
                         return
 
         self.backup_files(install_directory)
@@ -106,27 +109,27 @@ class CudaIntellisense:
 
         return
 
-
     def install_headers(self, install_directory):
         destination_path = os.path.join(install_directory, "cuda_intellisense")
         if not os.path.exists(destination_path):
             os.makedirs(destination_path)
-            print(f"Create directory '{destination_path}'")
+            self.logger.info(f"Create directory '{destination_path}'")
 
-        input_header_paths = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, "headers"))
+        input_header_paths = os.path.abspath(
+            os.path.join(__file__, os.pardir, os.pardir, "headers"))
         for filename in os.listdir(input_header_paths):
             input_path = os.path.join(input_header_paths, filename)
             output_path = os.path.join(destination_path, filename)
 
-            print(f"Copy '{input_path}' to '{output_path}'")
+            self.logger.info(f"Copy '{input_path}' to '{output_path}'")
             shutil.copy(input_path, output_path)
 
         self.write_version_header(destination_path)
-        
 
     def write_version_header(self, destination_path):
-        version_header_path = os.path.join(destination_path, "cuda_intellisense_version.h")
-        print(f"Write '{version_header_path}' file")
+        version_header_path = os.path.join(
+            destination_path, "cuda_intellisense_version.h")
+        self.logger.info(f"Write '{version_header_path}' file")
 
         content = str()
         content += "#pragma once\n"
@@ -138,9 +141,27 @@ class CudaIntellisense:
             f.write(content)
 
 
-    def error_message(self, msg):
-        return f"[ERROR] {msg}"
+    def init_log(self):
+        log_dir = "log"
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
 
+        log_file = os.path.join(log_dir, datetime.now().strftime("%Y%m%d%H%M%S.log"))
+
+        self.logger =  logging.getLogger("cuda_intellisense")
+        self.logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setLevel(logging.DEBUG)
+        stdout_handler.setFormatter(formatter)
+
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stdout_handler)
 
 if __name__ == "__main__":
     option = InstallOption(sys.argv)
