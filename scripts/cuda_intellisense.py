@@ -48,7 +48,10 @@ class CudaIntellisense:
             self.logger.info(self.option.usage())
             return
 
-        self.install(self.option.install_path)
+        if self.option.uninstall:
+            self.uninstall(self.option.install_path)
+        else:
+            self.install(self.option.install_path)
 
     def install(self, install_directory):
         if not os.path.exists(install_directory):
@@ -65,7 +68,7 @@ class CudaIntellisense:
         self.modify_target_file(install_directory)
         self.install_headers(install_directory)
 
-        self.logger.info("Installation complete.")
+        self.logger.info("Install complete.")
 
     def target_file(self, install_directory):
         return os.path.join(install_directory, "crt", "host_defines.h")
@@ -77,13 +80,20 @@ class CudaIntellisense:
         self.logger.info(f"Backup '{file_path}' as '{backup_path}'")
         shutil.copy(file_path, backup_path)
 
-    def backup_file_path(self, file_path):
+    def backup_file_path(self, file_path, new = True):
         backup_path = f"{file_path}.backup"
+
+        if not new:
+            if not os.path.exists(backup_path):
+                return None
+            else:
+                return backup_path
 
         count = 0
         while os.path.exists(backup_path):
             count += 1
             backup_path = f"{file_path}.backup{count}"
+
         return backup_path
 
     def modify_target_file(self, install_directory):
@@ -114,7 +124,7 @@ class CudaIntellisense:
         return
 
     def install_headers(self, install_directory):
-        destination_path = os.path.join(install_directory, "cuda_intellisense")
+        destination_path = self.header_directory(install_directory)
         if not os.path.exists(destination_path):
             os.makedirs(destination_path)
             self.logger.info(f"Create directory '{destination_path}'")
@@ -130,6 +140,9 @@ class CudaIntellisense:
 
         self.write_version_header(destination_path)
 
+    def header_directory(self, install_directory):
+        return os.path.join(install_directory, "cuda_intellisense")
+
     def write_version_header(self, destination_path):
         version_header_path = os.path.join(
             destination_path, "cuda_intellisense_version.h")
@@ -144,15 +157,41 @@ class CudaIntellisense:
         with open(version_header_path, "w") as f:
             f.write(content)
 
+    def uninstall(self, install_directory):
+
+        file_path = self.target_file(install_directory)
+        
+        backup_path = self.backup_file_path(file_path, new=False)
+        if backup_path is None:
+            self.logger.error(f"Cannot find backup file from {install_directory}. Uninstall failed.")
+            return
+
+        self.logger.info(f"Uninstall cuda_intellisense from '{install_directory}'")
+
+        os.remove(file_path)
+        os.rename(backup_path, file_path)
+        self.logger.info(f"Restore '{file_path}' file from '{backup_path}' file")
+
+        header_directory = self.header_directory(install_directory)
+        if not os.path.exists(header_directory):
+            self.logger.warning(f"Cannot find '{header_directory}' directory.")
+            return
+
+        shutil.rmtree(header_directory)
+        self.logger.info(f"Remove '{header_directory}' directory")
+
+        self.logger.info("Uninstall complete.")
+
+
 
     def init_log(self):
-        log_dir = "log"
+        log_dir = self.log_dir()
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
         log_file = os.path.join(log_dir, datetime.now().strftime("%Y%m%d%H%M%S.log"))
 
-        self.logger =  logging.getLogger("cuda_intellisense")
+        self.logger = logging.getLogger("cuda_intellisense")
         self.logger.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
@@ -166,6 +205,10 @@ class CudaIntellisense:
 
         self.logger.addHandler(file_handler)
         self.logger.addHandler(stdout_handler)
+
+    def log_dir(self):
+        return "log"
+
 
 if __name__ == "__main__":
     option = InstallOption(sys.argv)

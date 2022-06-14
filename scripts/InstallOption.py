@@ -32,6 +32,7 @@ class InstallOption:
         self.error = None
         self.help_requested = False
         self.version_requested = False
+        self.uninstall = False
 
         self._parse()
 
@@ -40,7 +41,7 @@ class InstallOption:
         self.script_path = self.argv[0]
 
         try:
-            opts, _ = getopt.getopt(self.argv[1:], "hp:", ["help", "path=", "cuda_path=", "version"])
+            opts, _ = getopt.getopt(self.argv[1:], "hp:", ["help", "path=", "cuda_path=", "version", "uninstall"])
 
         except getopt.GetoptError:
             self.error = "invalid option"
@@ -59,6 +60,9 @@ class InstallOption:
 
             elif opt == "--version":
                 self.version_requested = True
+
+            elif opt == "--uninstall":
+                self.uninstall = True
 
         if self.install_path is None:
             self.install_path = self.default_path()
@@ -81,5 +85,6 @@ class InstallOption:
         msg += "\t--path=, -p=     : installation path. default value: " + self.default_path("${CUDA_PATH}") + "\n"
         msg += "\t--cuda_path=     : name of the cuda path environment variable (ex> CUDA_PATH_v10_2). default value: CUDA_PATH\n"
         msg += "\t--version        : show the version of cuda_intellisense.\n"
+        msg += "\t--uninstall      : uninstall cuda_intellisense.\n"
         msg += "\t-help, h         : show this help.\n"
         return msg
