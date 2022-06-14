@@ -158,6 +158,12 @@ class CudaIntellisense:
             f.write(content)
 
     def uninstall(self, install_directory):
+        confirmed = self.confirm_uninstall(install_directory)
+        self.info(f"User confirmation for uninstall: {confirmed}")
+
+        if not confirmed:
+            self.info("Uninstall canceled.")
+            return
 
         file_path = self.target_file(install_directory)
 
@@ -182,6 +188,17 @@ class CudaIntellisense:
         self.info(f"Remove '{header_directory}' directory")
 
         self.info("Uninstall complete.")
+
+    def confirm_uninstall(self, install_directory):
+        while True:
+            reply = str(input(f"Do you really want to uninstall cuda_intellisense from '{install_directory}'? (y/n): ")).lower().strip()
+            if reply in ["y", "yes"]:
+                return True
+
+            if reply in ["n", "no"]:
+                return False
+
+            print("Invalid input.")
 
     def init_log(self):
         if self._logger is not None:
