@@ -31,7 +31,7 @@ from InstallOption import InstallOption
 class CudaIntellisense:
     def __init__(self, option: InstallOption) -> None:
         self.option = option
-        self.version = "v0.2"
+        self.version = "0.5.0"
         self._logger = None
 
     def run(self):
