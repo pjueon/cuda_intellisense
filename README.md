@@ -43,6 +43,7 @@ python scripts/cuda_intellisense.py [options]
 |`--path=`, `-p=`|installation path. default value: `${CUDA_PATH}/include`|
 |`--cuda_path=`|name of the cuda path environment variable (ex> `CUDA_PATH_v10_2`). default value: `CUDA_PATH`|
 |`--version`|show the version of cuda_intellisense.|
+|`--uninstall`|uninstall cuda_intellisense.|
 |`--help`, `-h`|show help.|
 
 That's it!
