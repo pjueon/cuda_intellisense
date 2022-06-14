@@ -191,7 +191,8 @@ class CudaIntellisense:
 
     def confirm_uninstall(self, install_directory):
         while True:
-            reply = str(input(f"Do you really want to uninstall cuda_intellisense from '{install_directory}'? (y/n): ")).lower().strip()
+            reply = str(input(
+                f"Do you really want to uninstall cuda_intellisense from '{install_directory}'? (y/n): ")).lower().strip()
             if reply in ["y", "yes"]:
                 return True
 
